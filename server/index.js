@@ -5,16 +5,26 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
+const {
+  getDb,
+  ensureSchema,
+  listLeads,
+  getLead,
+  insertLead,
+  updateLeadStatus,
+} = require("./db");
+
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const ROOT = path.join(__dirname, "..");
-const DATA_DIR = path.join(ROOT, "data");
-const LEADS_FILE = path.join(DATA_DIR, "leads.json");
+const LEADS_FILE = path.join(ROOT, "data", "leads.json");
 const PUBLIC_DIR = path.join(ROOT, "public");
 const COOKIE_NAME = "luma_admin";
 const SESSION_SECRET = process.env.SESSION_SECRET || "luma-dev-secret";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin";
 const GEMINI_MODEL = "gemini-3.5-flash-lite";
+
+let db;
 
 const SYSTEM_PROMPT = `Ты — ИИ-помощник веб-студии Luma. Отвечай по-русски, коротко, тепло и по делу.
 
@@ -37,31 +47,6 @@ Luma делает сайты и лендинги со встроенным ИИ,
 app.use(express.json({ limit: "200kb" }));
 app.use(cookieParser());
 app.use(express.static(PUBLIC_DIR));
-
-async function ensureStore() {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  try {
-    await fs.access(LEADS_FILE);
-  } catch {
-    await fs.writeFile(LEADS_FILE, "[]", "utf8");
-  }
-}
-
-async function readLeads() {
-  await ensureStore();
-  const raw = await fs.readFile(LEADS_FILE, "utf8");
-  try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-async function writeLeads(leads) {
-  await ensureStore();
-  await fs.writeFile(LEADS_FILE, JSON.stringify(leads, null, 2), "utf8");
-}
 
 function signToken(value) {
   return crypto.createHmac("sha256", SESSION_SECRET).update(value).digest("hex");
@@ -135,6 +120,40 @@ async function notifyTelegram(lead) {
   return { sent: true };
 }
 
+async function migrateLocalLeads() {
+  try {
+    const raw = await fs.readFile(LEADS_FILE, "utf8");
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || !parsed.length) return;
+
+    const existing = await listLeads(db);
+    const known = new Set(existing.map((item) => item.id));
+    let imported = 0;
+
+    for (const item of parsed) {
+      if (!item?.id || known.has(item.id)) continue;
+      await insertLead(db, {
+        id: item.id,
+        createdAt: item.createdAt || new Date().toISOString(),
+        name: item.name || "Без имени",
+        contact: item.contact || "",
+        message: item.message || "",
+        projectType: item.projectType || "",
+        source: item.source || "form",
+        quiz: item.quiz || null,
+        status: item.status || "new",
+      });
+      imported += 1;
+    }
+
+    if (imported) {
+      console.log(`Turso: перенесено ${imported} заявок из leads.json`);
+    }
+  } catch {
+    // локального файла может не быть
+  }
+}
+
 app.get("/admin", (_req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, "admin.html"));
 });
@@ -162,25 +181,33 @@ app.post("/api/admin/logout", (_req, res) => {
 });
 
 app.get("/api/leads", requireAdmin, async (_req, res) => {
-  const leads = await readLeads();
-  leads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  res.json({ leads });
+  try {
+    const leads = await listLeads(db);
+    res.json({ leads });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Не удалось прочитать заявки из Turso" });
+  }
 });
 
 app.patch("/api/leads/:id", requireAdmin, async (req, res) => {
-  const leads = await readLeads();
-  const lead = leads.find((item) => item.id === req.params.id);
-  if (!lead) {
-    return res.status(404).json({ error: "Заявка не найдена" });
-  }
   const allowed = ["new", "in_progress", "closed"];
   const status = String(req.body?.status || "");
   if (!allowed.includes(status)) {
     return res.status(400).json({ error: "Некорректный статус" });
   }
-  lead.status = status;
-  await writeLeads(leads);
-  res.json({ lead });
+
+  try {
+    const updated = await updateLeadStatus(db, req.params.id, status);
+    if (!updated) {
+      return res.status(404).json({ error: "Заявка не найдена" });
+    }
+    const lead = await getLead(db, req.params.id);
+    res.json({ lead });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Не удалось обновить заявку в Turso" });
+  }
 });
 
 app.post("/api/leads", async (req, res) => {
@@ -210,9 +237,12 @@ app.post("/api/leads", async (req, res) => {
     status: "new",
   };
 
-  const leads = await readLeads();
-  leads.push(lead);
-  await writeLeads(leads);
+  try {
+    await insertLead(db, lead);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Не удалось сохранить заявку в Turso" });
+  }
 
   let telegram = { sent: false };
   try {
@@ -287,13 +317,17 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-ensureStore()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Luma: http://localhost:${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
+async function start() {
+  db = getDb();
+  await ensureSchema(db);
+  await migrateLocalLeads();
+  app.listen(PORT, () => {
+    console.log(`Luma: http://localhost:${PORT}`);
+    console.log("Leads store: Turso");
   });
+}
+
+start().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

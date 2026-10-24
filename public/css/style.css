@@ -219,11 +219,26 @@ main,
   color: var(--muted);
 }
 
+.nav-links a {
+  position: relative;
+  border-radius: 0.4rem;
+  padding: 0.15rem 0.25rem;
+  transition: color 0.3s ease, box-shadow 0.35s ease, text-shadow 0.35s ease;
+}
+
 .nav-links a:hover {
   color: var(--accent);
 }
 
+.nav-links a.is-tapped {
+  color: var(--accent-soft);
+  text-shadow: 0 0 14px rgba(35, 169, 189, 0.55);
+}
+
 .nav-toggle {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   display: none;
   margin-left: auto;
   background: transparent;
@@ -232,13 +247,18 @@ main,
   border-radius: 999px;
   padding: 0.45rem 0.9rem;
   cursor: pointer;
+  transition: box-shadow 0.35s ease, border-color 0.3s ease;
 }
 
 .btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   border: 0;
   cursor: pointer;
   border-radius: 999px;
   padding: 0.85rem 1.3rem;
+  transition: box-shadow 0.35s ease, background-color 0.35s ease, transform 0.2s ease;
 }
 
 .btn-primary {
@@ -247,10 +267,63 @@ main,
   font-weight: 700;
 }
 
+.btn-primary:hover {
+  background: var(--accent-soft);
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--ink);
   box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.btn-ghost:hover {
+  box-shadow: inset 0 0 0 1px var(--accent);
+  color: var(--accent-soft);
+}
+
+.btn.is-tapped,
+.ai-fab.is-tapped,
+.nav-toggle.is-tapped,
+.stage-cta.is-tapped,
+.quiz-options button.is-tapped,
+.chips button.is-tapped,
+.filters button.is-tapped,
+.path-step.is-tapped,
+.faq-item.is-tapped summary,
+.nav-links a.is-tapped {
+  box-shadow:
+    0 0 0 1px rgba(35, 169, 189, 0.55),
+    0 0 22px rgba(35, 169, 189, 0.32),
+    inset 0 0 18px rgba(35, 169, 189, 0.12);
+}
+
+.btn-primary.is-tapped {
+  box-shadow:
+    0 0 0 1px rgba(231, 243, 245, 0.35),
+    0 0 28px rgba(35, 169, 189, 0.55);
+}
+
+.tap-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(35, 169, 189, 0.5) 0%, rgba(35, 169, 189, 0.12) 45%, transparent 70%);
+  transform: scale(0);
+  opacity: 0.9;
+  animation: tap-ripple 0.7s ease-out forwards;
+  z-index: 1;
+}
+
+.btn-primary .tap-ripple {
+  background: radial-gradient(circle, rgba(1, 3, 16, 0.35) 0%, rgba(231, 243, 245, 0.15) 40%, transparent 70%);
+}
+
+@keyframes tap-ripple {
+  to {
+    transform: scale(2.4);
+    opacity: 0;
+  }
 }
 
 .hero,
@@ -339,6 +412,9 @@ main,
 }
 
 .stage-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   width: 100%;
   border: 0;
   border-top: 1px solid var(--line);
@@ -346,6 +422,11 @@ main,
   color: var(--accent);
   cursor: pointer;
   padding: 0.95rem;
+  transition: box-shadow 0.35s ease, background-color 0.3s ease;
+}
+
+.stage-cta:hover {
+  background: rgba(35, 169, 189, 0.08);
 }
 
 .section-head {
@@ -366,9 +447,15 @@ main,
   gap: 1.5rem;
   padding: 1.6rem 0;
   border-top: 1px solid var(--line);
+  border-radius: 0.6rem;
+  cursor: pointer;
   opacity: 0.38;
   transform: translateY(18px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.35s ease, background-color 0.35s ease;
+}
+
+.path-step:hover {
+  background: rgba(35, 169, 189, 0.06);
 }
 
 .path-step.is-on {
@@ -428,6 +515,12 @@ main,
 .faq-item {
   border-bottom: 1px solid var(--line);
   padding: 0.3rem 0;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.35s ease, background-color 0.35s ease;
+}
+
+.faq-item.is-tapped {
+  background: rgba(35, 169, 189, 0.06);
 }
 
 .faq-item summary {
@@ -528,6 +621,13 @@ textarea:focus {
   font-weight: 800;
   color: var(--on-accent);
   background: var(--accent);
+  overflow: hidden;
+  isolation: isolate;
+  transition: box-shadow 0.35s ease, transform 0.2s ease, background-color 0.3s ease;
+}
+
+.ai-fab:hover {
+  background: var(--accent-soft);
 }
 
 .ai-overlay {
@@ -602,6 +702,9 @@ textarea:focus {
 }
 
 .quiz-options button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   text-align: left;
   background: rgba(255, 255, 255, 0.03);
   color: var(--ink);
@@ -609,10 +712,18 @@ textarea:focus {
   border-radius: 0.9rem;
   padding: 0.85rem 1rem;
   cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.35s ease, background-color 0.3s ease;
 }
 
 .quiz-options button:hover {
   border-color: var(--accent);
+  background: rgba(35, 169, 189, 0.08);
+}
+
+.quiz-options button.is-selected {
+  border-color: var(--accent);
+  background: rgba(35, 169, 189, 0.14);
+  box-shadow: 0 0 18px rgba(35, 169, 189, 0.22);
 }
 
 .chat-log {
@@ -651,6 +762,9 @@ textarea:focus {
 }
 
 .chips button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   border: 1px solid var(--line);
   background: transparent;
   color: var(--muted);
@@ -658,6 +772,13 @@ textarea:focus {
   padding: 0.35rem 0.7rem;
   cursor: pointer;
   font-size: 0.85rem;
+  transition: border-color 0.3s ease, color 0.3s ease, box-shadow 0.35s ease, background-color 0.3s ease;
+}
+
+.chips button:hover {
+  border-color: var(--accent);
+  color: var(--accent-soft);
+  background: rgba(35, 169, 189, 0.08);
 }
 
 .chat-form {
@@ -697,12 +818,16 @@ textarea:focus {
 }
 
 .filters button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   border: 1px solid var(--line);
   background: transparent;
   color: var(--muted);
   border-radius: 999px;
   padding: 0.4rem 0.8rem;
   cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.35s ease, background-color 0.3s ease;
 }
 
 .filters button[aria-pressed="true"] {
@@ -794,5 +919,9 @@ textarea:focus {
   .path-step {
     opacity: 1;
     transform: none;
+  }
+
+  .tap-ripple {
+    display: none;
   }
 }
