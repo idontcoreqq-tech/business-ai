@@ -17,6 +17,16 @@ npm start
 
 Откройте http://localhost:3000 и http://localhost:3000/admin
 
+## Vercel
+
+Проект готов к деплою на Vercel (`api/index.js` + `vercel.json`).
+
+В **Project → Settings → Environment Variables** добавьте те же ключи, что в `.env`:
+
+`GEMINI_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `ADMIN_PASSWORD`, `SESSION_SECRET`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`
+
+После сохранения переменных сделайте Redeploy. Framework Preset: Other. Root Directory: `.`
+
 ## Переменные окружения
 
 | Ключ | Назначение |

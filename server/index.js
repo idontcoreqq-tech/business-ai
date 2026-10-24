@@ -14,7 +14,6 @@ const {
   updateLeadStatus,
 } = require("./db");
 
-const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const ROOT = path.join(__dirname, "..");
 const LEADS_FILE = path.join(ROOT, "data", "leads.json");
@@ -23,8 +22,10 @@ const COOKIE_NAME = "luma_admin";
 const SESSION_SECRET = process.env.SESSION_SECRET || "luma-dev-secret";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin";
 const GEMINI_MODEL = "gemini-3.5-flash-lite";
+const IS_VERCEL = Boolean(process.env.VERCEL);
 
 let db;
+let dbReady;
 
 const SYSTEM_PROMPT = `Ты — ИИ-помощник веб-студии Luma. Отвечай по-русски, коротко, тепло и по делу.
 
@@ -44,9 +45,22 @@ Luma делает сайты и лендинги со встроенным ИИ,
 - Если клиент готов — попроси контакты и скажи, что менеджер напишет в тот же день.
 - Если уже есть ответы квиза, опирайся на них: тип сайта, цель, бюджет, срок.`;
 
-app.use(express.json({ limit: "200kb" }));
-app.use(cookieParser());
-app.use(express.static(PUBLIC_DIR));
+async function readyDb() {
+  if (!dbReady) {
+    dbReady = (async () => {
+      db = getDb();
+      await ensureSchema(db);
+      if (!IS_VERCEL) {
+        await migrateLocalLeads();
+      }
+      return db;
+    })().catch((error) => {
+      dbReady = null;
+      throw error;
+    });
+  }
+  return dbReady;
+}
 
 function signToken(value) {
   return crypto.createHmac("sha256", SESSION_SECRET).update(value).digest("hex");
@@ -154,6 +168,25 @@ async function migrateLocalLeads() {
   }
 }
 
+const app = express();
+
+app.use(express.json({ limit: "200kb" }));
+app.use(cookieParser());
+app.use(express.static(PUBLIC_DIR));
+
+app.use(async (req, res, next) => {
+  if (!req.path.startsWith("/api/")) return next();
+  try {
+    await readyDb();
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "База Turso недоступна. Проверьте TURSO_DATABASE_URL и TURSO_AUTH_TOKEN.",
+    });
+  }
+});
+
 app.get("/admin", (_req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, "admin.html"));
 });
@@ -170,6 +203,7 @@ app.post("/api/admin/login", (req, res) => {
   res.cookie(COOKIE_NAME, signToken(ADMIN_PASSWORD), {
     httpOnly: true,
     sameSite: "lax",
+    secure: IS_VERCEL || process.env.NODE_ENV === "production",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.json({ ok: true });
@@ -317,17 +351,19 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-async function start() {
-  db = getDb();
-  await ensureSchema(db);
-  await migrateLocalLeads();
+async function startLocal() {
+  await readyDb();
   app.listen(PORT, () => {
     console.log(`Luma: http://localhost:${PORT}`);
     console.log("Leads store: Turso");
   });
 }
 
-start().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (require.main === module) {
+  startLocal().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
+
+module.exports = app;
