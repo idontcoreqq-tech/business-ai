@@ -61,88 +61,37 @@ function playDemo() {
     line.className = `line ${item.role}`;
     line.textContent = item.text;
     log.append(line);
-    const delay = prefersReducedMotion() ? 0 : 700 + index * 1100;
+    const delay = prefersReducedMotion() ? 0 : 500 + index * 700;
     window.setTimeout(() => line.classList.add("is-on"), delay);
   });
 }
 
 function initMotion() {
-  const title = document.getElementById("hero-title");
-  if (title && !prefersReducedMotion() && typeof gsap !== "undefined") {
-    gsap.from(title, { y: 28, opacity: 0, duration: 1.1, ease: "power3.out" });
-  }
+  const revealNodes = document.querySelectorAll(".section-head, .quote, .faq-item, .path-step, .stage, .lead-form");
 
-  if (prefersReducedMotion() || typeof gsap === "undefined") {
+  if (prefersReducedMotion() || !("IntersectionObserver" in window)) {
     document.querySelectorAll(".path-step").forEach((node) => node.classList.add("is-on"));
+    revealNodes.forEach((node) => node.classList.add("is-visible"));
     return;
   }
 
-  try {
-    gsap.registerPlugin(ScrollTrigger);
+  revealNodes.forEach((node) => node.classList.add("reveal-ready"));
 
-    if (window.Lenis) {
-      const lenis = new Lenis({ lerp: 0.08 });
-      lenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add((time) => lenis.raf(time * 1000));
-      gsap.ticker.lagSmoothing(0);
-    }
-
-    gsap.to(".giant", {
-      y: () => window.innerHeight * 0.25,
-      ease: "none",
-      scrollTrigger: { scrub: true },
-    });
-
-    gsap.utils.toArray(".orb").forEach((node, index) => {
-      gsap.to(node, {
-        y: (index + 1) * 80,
-        ease: "none",
-        scrollTrigger: { scrub: 1.2 },
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        if (entry.target.classList.contains("path-step")) {
+          entry.target.classList.add("is-on");
+        }
+        observer.unobserve(entry.target);
       });
-    });
+    },
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
+  );
 
-    gsap.from(".stage", {
-      x: 40,
-      opacity: 0,
-      duration: 1,
-      delay: 0.2,
-      ease: "power2.out",
-    });
-
-    gsap.utils.toArray(".section-head, .quote, .faq-item").forEach((node) => {
-      gsap.from(node, {
-        y: 28,
-        duration: 0.85,
-        ease: "power2.out",
-        scrollTrigger: { trigger: node, start: "top 88%", once: true },
-      });
-    });
-
-    gsap.utils.toArray(".path-step").forEach((node) => {
-      ScrollTrigger.create({
-        trigger: node,
-        start: "top 78%",
-        onEnter: () => node.classList.add("is-on"),
-      });
-    });
-
-    window.addEventListener("mousemove", (event) => {
-      const x = event.clientX / window.innerWidth - 0.5;
-      const y = event.clientY / window.innerHeight - 0.5;
-      document.querySelectorAll("[data-float]").forEach((node) => {
-        const intensity = Number(node.dataset.float) || 1;
-        gsap.to(node, {
-          x: x * 36 * intensity,
-          y: y * 24 * intensity,
-          duration: 1.4,
-          ease: "power2.out",
-          overwrite: "auto",
-        });
-      });
-    });
-  } catch (error) {
-    console.warn(error);
-  }
+  revealNodes.forEach((node) => observer.observe(node));
 }
 
 function openAi() {
