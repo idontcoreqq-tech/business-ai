@@ -187,6 +187,19 @@ app.use(async (req, res, next) => {
   }
 });
 
+app.get("/api/health", (_req, res) => {
+  res.json({
+    ok: true,
+    vercel: IS_VERCEL,
+    env: {
+      gemini: Boolean(process.env.GEMINI_API_KEY),
+      telegram: Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID),
+      turso: Boolean(process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN),
+      admin: Boolean(process.env.ADMIN_PASSWORD),
+    },
+  });
+});
+
 app.get("/admin", (_req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, "admin.html"));
 });
