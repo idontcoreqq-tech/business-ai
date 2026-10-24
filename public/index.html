@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Luma — сайт, который сам собирает заявки</title>
+    <meta
+      name="description"
+      content="Веб-студия Luma делает лендинги со встроенным ИИ: квиз, ответы по услуге и заявка в админку и Telegram."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true">
+      <div class="aurora-wash"></div>
+      <div class="orb orb-a" data-float="1"></div>
+      <div class="orb orb-b" data-float="1.4"></div>
+      <div class="orb orb-c" data-float="0.7"></div>
+      <div class="orb orb-d" data-float="1.1"></div>
+      <div class="orb orb-e" data-float="0.85"></div>
+      <div class="haze"></div>
+    </div>
+    <p class="giant" aria-hidden="true" data-depth="0.22">luma</p>
+
+    <header class="nav">
+      <a class="logo" href="#top">Luma</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Меню</button>
+      <nav class="nav-links" id="nav-links">
+        <a href="#advantages">Как это работает</a>
+        <a href="#reviews">Отзывы</a>
+        <a href="#faq">Вопросы</a>
+        <a href="#lead">Заявка</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <h1 id="hero-title">Сайт, который сам приводит клиента к заявке</h1>
+          <p>
+            Мы собираем лендинги, где ИИ отвечает на вопросы по услуге, проводит короткий квиз
+            и мягко просит контакт. Менеджер видит контекст — не пустую строку «перезвоните».
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#lead">Рассчитать проект</a>
+            <button class="btn btn-ghost" type="button" data-open-ai>Поговорить с ИИ</button>
+          </div>
+        </div>
+
+        <aside class="stage" aria-label="Пример диалога на сайте">
+          <div class="stage-bar">
+            <span>Помощник на лендинге</span>
+            <span class="pulse">онлайн</span>
+          </div>
+          <div class="stage-log" id="demo-log"></div>
+          <button class="stage-cta" type="button" data-open-ai>Попробовать на своих ответах</button>
+        </aside>
+      </section>
+
+      <section id="advantages" class="section">
+        <header class="section-head">
+          <h2>Путь заявки, пока менеджер ещё не взял трубку</h2>
+          <p>Это не чат «для красоты». Это квалификация: тип проекта, бюджет и контакт за один заход.</p>
+        </header>
+        <ol class="path">
+          <li class="path-step">
+            <strong>Посетитель спрашивает</strong>
+            <span>ИИ знает ваши услуги, сроки и ориентиры по цене. Не уводит в сторону и не обещает лишнего.</span>
+          </li>
+          <li class="path-step">
+            <strong>Четыре шага квиза</strong>
+            <span>Тип сайта, цель, бюджет, срок. Дальше разговор уже не с нуля — помощник опирается на ответы.</span>
+          </li>
+          <li class="path-step">
+            <strong>Мягкий переход к контакту</strong>
+            <span>После пары полезных реплик ИИ предлагает имя и Telegram. Форма живёт внутри того же окна.</span>
+          </li>
+          <li class="path-step">
+            <strong>Админка и группа</strong>
+            <span>Лид пишется в /admin и дублируется ботом в Telegram-группу. Ответить можно с телефона.</span>
+          </li>
+        </ol>
+      </section>
+
+      <section id="reviews" class="section">
+        <header class="section-head">
+          <h2>После запуска заявки приходят уже с контекстом</h2>
+        </header>
+        <div class="quotes">
+          <figure class="quote q1">
+            <blockquote>Раньше заявки приходили раз в два дня. Теперь менеджер закрывает 8–12 диалогов в неделю, и почти все уже с бюджетом.</blockquote>
+            <figcaption>
+              <span class="avatar">МС</span>
+              Марина Соколова, онлайн-школа «Слой»
+            </figcaption>
+          </figure>
+          <figure class="quote q2">
+            <blockquote>ИИ не заменяет продажи. Он отсекает «просто посмотреть». В админке сразу видно: лендинг человеку нужен или магазин.</blockquote>
+            <figcaption>
+              <span class="avatar">ИВ</span>
+              Илья Вершин, студия интерьеров North
+            </figcaption>
+          </figure>
+          <figure class="quote q3">
+            <blockquote>Ночью пришла заявка в группу, утром уже созвон. Сайт собрали за две недели, как и обещали на первом экране.</blockquote>
+            <figcaption>
+              <span class="avatar">АК</span>
+              Андрей Ким, сервис доставки Boxly
+            </figcaption>
+          </figure>
+          <figure class="quote q4">
+            <blockquote>Встроили помощника в старый сайт. Форма перестала быть кладбищем — люди договаривают мысль в квизе и оставляют Telegram.</blockquote>
+            <figcaption>
+              <span class="avatar">ЕЛ</span>
+              Елена Лаврова, клиника «Тихая»
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="faq" class="section">
+        <header class="section-head">
+          <h2>Что обычно спрашивают перед стартом</h2>
+        </header>
+        <div class="faq">
+          <details class="faq-item" open>
+            <summary>Сколько стоит сайт с ИИ?</summary>
+            <p>Лендинг с помощником — от 90 000 ₽. Корпоративный сайт — от 180 000 ₽. Точную цифру считаем после квиза: объём страниц и интеграции.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Как работает ИИ на сайте?</summary>
+            <p>Посетитель проходит четыре шага и может спросить про сроки или состав работ. Модель отвечает по вашим услугам и предлагает оставить контакт.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Куда падают заявки?</summary>
+            <p>В админку /admin и копией в Telegram-группу. Бот пишет имя, контакт, источник и ответы квиза.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Нужен ли свой ключ Gemini?</summary>
+            <p>Да, подключаем gemini-3.5-flash-lite. Ключ живёт на сервере и не попадает в браузер посетителя.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Можно встроить ИИ в уже существующий сайт?</summary>
+            <p>Можно: виджет, форма и отправка в Telegram. Обычно это быстрее, чем собирать сайт с нуля.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Сколько длится запуск?</summary>
+            <p>Лендинг — 10–18 рабочих дней. Каталог или личный кабинет — 3–6 недель, со промежуточными сборками.</p>
+          </details>
+        </div>
+      </section>
+
+      <section id="lead" class="section lead-section">
+        <div class="lead-grid">
+          <header class="section-head">
+            <h2>Напишите задачу — пришлём план и оценку в тот же день</h2>
+            <p>Или откройте помощника: он соберёт квиз и передаст заявку в ту же очередь.</p>
+          </header>
+          <form class="lead-form" id="lead-form">
+            <label>
+              Имя
+              <input name="name" type="text" autocomplete="name" required minlength="2" placeholder="Анна" />
+            </label>
+            <label>
+              Телефон или Telegram
+              <input name="contact" type="text" required minlength="5" placeholder="+7 или @username" />
+            </label>
+            <label>
+              Тип сайта
+              <select name="projectType">
+                <option value="Лендинг с ИИ">Лендинг с ИИ</option>
+                <option value="Корпоративный сайт">Корпоративный сайт</option>
+                <option value="Магазин или сервис">Магазин или сервис</option>
+                <option value="Доработка текущего сайта">Доработка текущего сайта</option>
+              </select>
+            </label>
+            <label>
+              Комментарий
+              <textarea name="message" rows="4" placeholder="Срок, ниша, что уже есть"></textarea>
+            </label>
+            <button class="btn btn-primary" type="submit">Отправить заявку</button>
+            <p class="form-status" id="lead-status" role="status"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a class="logo" href="#top">Luma</a>
+      <p>Веб-студия. Сайты, которые сами собирают заявки.</p>
+    </footer>
+
+    <button class="ai-fab" type="button" data-open-ai aria-label="Открыть ИИ-помощника">ИИ</button>
+
+    <div class="ai-overlay" id="ai-widget" hidden>
+      <section class="ai-panel" role="dialog" aria-modal="true" aria-labelledby="ai-title">
+        <header class="ai-head">
+          <div>
+            <h2 id="ai-title">Помощник Luma</h2>
+            <p id="ai-subtitle">Сначала четыре коротких шага</p>
+          </div>
+          <button class="ai-close" type="button" data-close-ai aria-label="Закрыть">Закрыть</button>
+        </header>
+        <div class="quiz-track" id="quiz-track" aria-hidden="true">
+          <span></span>
+        </div>
+        <div class="ai-body">
+          <div id="quiz-view">
+            <p class="quiz-progress" id="quiz-progress"></p>
+            <h3 id="quiz-question"></h3>
+            <div class="quiz-options" id="quiz-options"></div>
+          </div>
+          <div id="chat-view" hidden>
+            <div class="chat-log" id="chat-log"></div>
+            <div class="chips" id="chat-chips"></div>
+            <form class="chat-form" id="chat-form">
+              <input id="chat-input" type="text" placeholder="Спросите про сроки или состав работ" autocomplete="off" />
+              <button class="btn btn-primary" type="submit">Спросить</button>
+            </form>
+            <button class="btn btn-ghost" type="button" id="show-chat-lead">Оставить заявку</button>
+            <form class="lead-form compact" id="chat-lead-form" hidden>
+              <label>
+                Имя
+                <input name="name" type="text" required minlength="2" />
+              </label>
+              <label>
+                Телефон или Telegram
+                <input name="contact" type="text" required minlength="5" />
+              </label>
+              <button class="btn btn-primary" type="submit">Отправить менеджеру</button>
+              <p class="form-status" id="chat-lead-status" role="status"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

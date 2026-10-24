@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Luma — заявки</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true">
+      <div class="aurora-wash"></div>
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="orb orb-d"></div>
+      <div class="haze"></div>
+    </div>
+    <main class="admin-shell">
+      <header class="section-head">
+        <h1>Заявки</h1>
+        <p>Очередь с лендинга, квиза и чата. Копия уходит в Telegram-группу.</p>
+      </header>
+
+      <form class="lead-form" id="login-form">
+        <label>
+          Пароль
+          <input name="password" type="password" required />
+        </label>
+        <button class="btn btn-primary" type="submit">Войти</button>
+        <p class="form-status" id="login-status" role="status"></p>
+      </form>
+
+      <section id="board" hidden>
+        <div class="admin-top">
+          <div class="stats" id="stats"></div>
+          <button class="btn btn-ghost" type="button" id="logout">Выйти</button>
+        </div>
+        <div class="filters" id="filters">
+          <button type="button" data-filter="all" aria-pressed="true">Все</button>
+          <button type="button" data-filter="new">Новые</button>
+          <button type="button" data-filter="in_progress">В работе</button>
+          <button type="button" data-filter="closed">Закрытые</button>
+        </div>
+        <div id="leads-body"></div>
+      </section>
+    </main>
+    <script src="/js/admin.js"></script>
+  </body>
+</html>
